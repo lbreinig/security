@@ -34,7 +34,7 @@
     <groupId>org.opensearch</groupId>
     <artifactId>opensearch-security</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.2.0-SNAPSHOT</version>
+    <version>1.2.2.0</version>
     <name>OpenSearch Security</name>
     <description>OpenSearch Security</description>
     <url>https://github.com/opensearch-project/security</url>
@@ -68,7 +68,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.release>8</maven.compiler.release>
 
-        <opensearch.version>1.2.2-SNAPSHOT</opensearch.version>
+        <opensearch.version>1.2.2</opensearch.version>
 
         <!-- deps -->
         <netty-native.version>2.0.25.Final</netty-native.version>
@@ -100,18 +100,18 @@
     </properties>
 
     <scm>
-        <url>https://github.com/opensearch-project/security</url>
-        <connection>scm:git:git@github.com:opensearch-project/security.git</connection>
-        <developerConnection>scm:git:git@github.com:opensearch-project/security.git</developerConnection>
+        <url>https://github.com/lbreinig/security</url>
+        <connection>scm:git:git@github.com:lbreinig/security.git</connection>
+        <developerConnection>scm:git:git@github.com:lbreinig/security.git</developerConnection>
         <tag>1.2.2.0</tag>
     </scm>
 
     <repositories>
         <repository>
-            <id>snapshots-repo</id>
-            <url>https://aws.oss.sonatype.org/content/repositories/snapshots</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <id>no-snapshots-repo</id>
+            <url>https://aws.oss.sonatype.org/content/repositories</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
         </repository>
     </repositories>
 
