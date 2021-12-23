@@ -39,6 +39,7 @@ buildDir = 'gradle-build'
 ext {
     securityPluginVersion = '1.2.3.0'
     isSnapshot = "true" == System.getProperty("build.snapshot", "true")
+    isSnapshot = "false"
 }
 
 group = "org.opensearch"
@@ -67,7 +68,7 @@ ospackage {
     user 'root'
     permissionGroup 'root'
 
-    requires('opensearch-oss', "1.2.3", EQUAL)
+    requires('opensearch', "1.2.3", EQUAL)
     packager = 'Amazon'
     vendor = 'Amazon'
     os = 'LINUX'
@@ -82,7 +83,8 @@ ospackage {
      '''.stripIndent().replace('\n', ' ').trim()
 
     //TODO: Would be better if the install_demo_configuration.sh script is marked executable in the upstream plugin instead of running bash manually here
-    postInstall "exec /bin/bash /usr/share/opensearch/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s"
+    //TODO more: Would be even better if I customize this to initialize with internal defaults rather than the demo setup
+    //postInstall "exec /bin/bash /usr/share/opensearch/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s"
 }
 
 buildRpm {
