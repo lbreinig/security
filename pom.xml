@@ -109,8 +109,8 @@
     <repositories>
         <repository>
             <id>snapshots-repo</id>
-            <url>https://aws.oss.sonatype.org/content/repositories/snapshots</url>
-            <releases><enabled>false</enabled></releases>
+            <url>https://aws.oss.sonatype.org/content/repositories</url>
+            <releases><enabled>true</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
