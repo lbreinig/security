@@ -1,6 +1,5 @@
 #!/bin/bash
 SCRIPT_PATH="${BASH_SOURCE[0]}"
-export "JAVA_HOME=/usr/share/opensearch/jdk"
 if ! [ -x "$(command -v realpath)" ]; then
     if [ -L "$SCRIPT_PATH" ]; then
 
@@ -12,14 +11,8 @@ if ! [ -x "$(command -v realpath)" ]; then
         DIR="$( cd "$( dirname "$SCRIPT_PATH" )" && pwd -P)"
     fi
 else
-#    DIR="$( cd "$( dirname "$(realpath "$SCRIPT_PATH")" )" && pwd -P)"
-# let's just stop this silliness and set it!
-     DIR="/usr/share/opensearch/plugins/opensearch-security/tools"
+    DIR="$( cd "$( dirname "$(realpath "$SCRIPT_PATH")" )" && pwd -P)"
 fi
-
-# add some verbosity for debugging
-echo "script_path=${SCRIPT_PATH}"
-echo "dir=${DIR}"
 
 BIN_PATH="java"
 
@@ -29,6 +22,5 @@ else
     BIN_PATH="$JAVA_HOME/bin/java"
 fi
 
-# set absolute path to /usr/share/opensearch/lib since we're keeping the plugins dir on persistent storage
-"$BIN_PATH" $JAVA_OPTS -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp "$DIR/../*:/usr/share/opensearch/lib/*:$DIR/../deps/*" org.opensearch.security.tools.SecurityAdmin "$@" 2>/dev/null
+"$BIN_PATH" $JAVA_OPTS -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp "$DIR/../*:$DIR/../../../lib/*:$DIR/../deps/*" org.opensearch.security.tools.SecurityAdmin "$@" 2>/dev/null
 
