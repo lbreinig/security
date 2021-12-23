@@ -9,7 +9,7 @@ _meta:
 # Define your internal users here
 
 dashboards:
-  hash: "$2y$12$fDityRkAhMrFq8Uyx.RtNuja3oxtBePuFkjrIWtouKF8TaSiucTMu"
+  hash: ""
   reserved: false
   backend_roles:
   - "kibanauser"
@@ -19,14 +19,14 @@ dashboards:
 ## Demo users
 
 admin:
-  hash: "$2y$12$tE3C3jxr/n9EZn7P2hMruu8bMfrLQikQbercyePn49lUtJcfzj7pG"
+  hash: ""
   reserved: true
   backend_roles:
   - "admin"
   description: "Demo admin user"
 
 kibanaserver:
-  hash: "$2y$12$fDityRkAhMrFq8Uyx.RtNuja3oxtBePuFkjrIWtouKF8TaSiucTMu"
+  hash: ""
   reserved: true
   description: "Demo OpenSearch Dashboards user"
 
