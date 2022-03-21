@@ -117,25 +117,12 @@ public class OpenSSLTest extends SSLTest {
         super.testHttpsV3Fail();
     }
 
-    @Override
-    @Test(timeout=40000)
-    public void testTransportClientSSL() throws Exception {
-        Assume.assumeTrue(OpenSearchSecuritySSLPlugin.OPENSSL_SUPPORTED && OpenSsl.isAvailable());
-        super.testTransportClientSSL();
-    }
 
     @Override
     @Test(timeout=40000)
     public void testNodeClientSSL() throws Exception {
         Assume.assumeTrue(OpenSearchSecuritySSLPlugin.OPENSSL_SUPPORTED && OpenSsl.isAvailable());
         super.testNodeClientSSL();
-    }
-
-    @Override
-    @Test(timeout=40000)
-    public void testTransportClientSSLFail() throws Exception {
-        Assume.assumeTrue(OpenSearchSecuritySSLPlugin.OPENSSL_SUPPORTED && OpenSsl.isAvailable());
-        super.testTransportClientSSLFail();
     }
     
     @Override
@@ -246,9 +233,9 @@ public class OpenSSLTest extends SSLTest {
     }
 
     @Test
-    public void testTLSv1() throws Exception {
+    public void testTLSv12() throws Exception {
         Assume.assumeTrue(OpenSearchSecuritySSLPlugin.OPENSSL_SUPPORTED && OpenSsl.isAvailable());
-        super.testTLSv1();
+        super.testTLSv12();
     }
 
     @Test

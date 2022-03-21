@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
+
+import org.checkerframework.checker.units.qual.C;
 import org.opensearch.OpenSearchSecurityException;
 import org.opensearch.cluster.health.ClusterHealthStatus;
 import org.opensearch.common.io.stream.StreamInput;
@@ -43,7 +45,6 @@ import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.action.support.master.AcknowledgedRequest;
 import org.opensearch.action.support.master.AcknowledgedResponse;
 import org.opensearch.client.Client;
-import org.opensearch.client.transport.TransportClient;
 import org.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.opensearch.cluster.service.ClusterService;
 import org.opensearch.common.inject.Inject;
@@ -58,6 +59,7 @@ import org.opensearch.node.PluginAwareNode;
 import org.opensearch.plugins.ActionPlugin;
 import org.opensearch.plugins.Plugin;
 import org.opensearch.repositories.RepositoriesService;
+import org.opensearch.rest.RestStatus;
 import org.opensearch.script.ScriptService;
 import org.opensearch.security.OpenSearchSecurityPlugin;
 import org.opensearch.security.support.ConfigConstants;
@@ -176,7 +178,7 @@ public class CCReplicationTest extends AbstractDlsFlsTest {
         }
     }
 
-    void populateData(TransportClient tc) {
+    void populateData(Client tc) {
         tc.index(new IndexRequest("hr-dls").type("config").id("0").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
             .source("{\"User\": \"testuser\",\"Date\":\"2021-01-18T17:27:20Z\",\"Designation\":\"HR\"}", XContentType.JSON)).actionGet();
         tc.index(new IndexRequest("hr-fls").type("config").id("1").setRefreshPolicy(RefreshPolicy.IMMEDIATE)
@@ -220,6 +222,7 @@ public class CCReplicationTest extends AbstractDlsFlsTest {
             log.warn(ex.getMessage());
             Assert.assertNotNull(ex);
             Assert.assertTrue(ex.getMessage().contains("Cross Cluster Replication is not supported when FLS or DLS or Fieldmasking is activated"));
+            Assert.assertEquals(ex.status(), RestStatus.FORBIDDEN);
         }
 
         try (Node node = new PluginAwareNode(false, tcSettings, Netty4Plugin.class, OpenSearchSecurityPlugin.class, MockReplicationPlugin.class).start()) {
@@ -229,6 +232,7 @@ public class CCReplicationTest extends AbstractDlsFlsTest {
             log.warn(ex.getMessage());
             Assert.assertNotNull(ex);
             Assert.assertTrue(ex.getMessage().contains("Cross Cluster Replication is not supported when FLS or DLS or Fieldmasking is activated"));
+            Assert.assertEquals(ex.status(), RestStatus.FORBIDDEN);
         }
 
         try (Node node = new PluginAwareNode(false, tcSettings, Netty4Plugin.class, OpenSearchSecurityPlugin.class, MockReplicationPlugin.class).start()) {
@@ -238,6 +242,7 @@ public class CCReplicationTest extends AbstractDlsFlsTest {
             log.warn(ex.getMessage());
             Assert.assertNotNull(ex);
             Assert.assertTrue(ex.getMessage().contains("Cross Cluster Replication is not supported when FLS or DLS or Fieldmasking is activated"));
+            Assert.assertEquals(ex.status(), RestStatus.FORBIDDEN);
         }
 
         try (Node node = new PluginAwareNode(false, tcSettings, Netty4Plugin.class, OpenSearchSecurityPlugin.class, MockReplicationPlugin.class).start()) {
