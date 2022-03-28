@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        jdk: [8, 11, 14, 17]
+        jdk: [11, 14, 17]
 
     steps:
 
@@ -20,22 +20,11 @@ jobs:
       if: matrix.jdk != 17 
       uses: actions/setup-java@v1
       with:
-        java-version: ${{ matrix.jdk }}
-
-    - name: Set up build for JDK17 to use JKD11
-      if: matrix.jdk == 17 
-      uses: actions/setup-java@v2
-      with:
         distribution: temurin # Temurin is a distribution of adoptium
-        java-version: 11
+        java-version: ${{ matrix.jdk }}
 
     - name: Checkout security
       uses: actions/checkout@v2
-
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
-      with:
-        languages: java
 
     - name: Cache Gradle packages
       uses: actions/cache@v2
@@ -50,9 +39,6 @@ jobs:
     - name: Package
       run: ./gradlew clean build -Dbuild.snapshot=false -x test
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
-
     - name: Test
       run: OPENDISTRO_SECURITY_TEST_OPENSSL_OPT=true ./gradlew test -i
 
@@ -62,9 +48,62 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./build/jacoco/test/jacocoTestReport.xml
 
-    - name: Run Security Backwards Compatibility Tests
-      run: |
+  backward-compatibility:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - run: ./gradlew clean build -Dbuild.snapshot=false -x test
+    - run: |
         echo "Running backwards compatibility tests ..."
         cp -r build/ ./bwc-test/
         cd bwc-test/
         ./gradlew bwcTestSuite -Dtests.security.manager=false
+
+  code-ql:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - uses: github/codeql-action/init@v1
+      with:
+        languages: java
+    - run: ./gradlew clean build -Dbuild.snapshot=false -x test
+    - uses: github/codeql-action/analyze@v1
+
+  build-artifact-names:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - run: ./gradlew clean assemble
+
+    - id: security-plugin-version
+      uses: madhead/read-java-properties@66cc8c88f5c6f6069ebfb42586024dd6ffe2e451
+      with:
+         file: gradle.properties
+         property: security-plugin.version
+
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - run: ./gradlew clean assemble
+    - run: test -s ./build/opensearch-security-${{ steps.security-plugin-version.outputs.value }}-SNAPSHOT.jar
+
+    - run: ./gradlew clean assemble -Dbuild.snapshot=false
+    - run: test -s ./build/opensearch-security-${{ steps.security-plugin-version.outputs.value }}.jar
+
+    - run: ./gradlew clean assemble -Dbuild.snapshot=false -Dbuild.version_qualifier=alpha1
+    - run: test -s ./build/opensearch-security-${{ steps.security-plugin-version.outputs.value }}-alpha1.jar
+
+    - run: ./gradlew clean assemble -Dbuild.version_qualifier=alpha1
+    - run: test -s ./build/opensearch-security-${{ steps.security-plugin-version.outputs.value }}-alpha1-SNAPSHOT.jar
+
+    - name: List files in the build directory if there was an error
+      run: ls -al ./build/
+      if: failure()
